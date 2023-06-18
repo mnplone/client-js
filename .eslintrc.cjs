@@ -154,5 +154,6 @@ module.exports = {
 		'unicorn/prefer-ternary': 'off',
 		'unicorn/prefer-type-error': 'off',
 		'unicorn/prevent-abbreviations': 'off',
+		'unicorn/expiring-todo-comments': 'off',
 	},
 };
