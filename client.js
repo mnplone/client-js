@@ -24,15 +24,9 @@ class M1 {
     #access_token;
     #refresh_token;
 
-    constructor ({ access_token, refresh_token, polling = false, subs = '' }) {
-
-        // if (typeof access_token !== 'string') {
-        //     throw new Error('Invalid access token.');
-        // }
-
+    constructor ({ access_token, refresh_token, polling = false, subs }) {
         this.#access_token = access_token;
         this.#refresh_token = refresh_token;
-        console.log(this.#access_token);
         
         if (true === polling) {
             const ws_url = new URL('wss://monopoly-one.com/ws');
@@ -41,8 +35,7 @@ class M1 {
 
             if (this.#access_token) {
                 params.set('access_token', this.#access_token);
-            }
-            
+            }            
             if (typeof subs === 'string') {
                 params.set('subs', subs);
             }
@@ -76,7 +69,6 @@ class M1 {
 
         url.search = url_params.toString();
 
-        // const request = new Request(url.toString());
         const response = await fetch(url.toString());
         const response_json = await response.json();
 
@@ -86,13 +78,15 @@ class M1 {
                 throw new Error('Invalid access token. Cannot refresh without valid refresh token.');
             }
 
+            const refresh_url = new URL(apiUrl + 'auth.refresh');
+
+            const refresh_params = new URLSearchParams();
+            refresh_params.set('refresh_token', this.#refresh_token);
+
+            refresh_url.search = refresh_params.toString();
+
             // refreshing access token
-            const refresh_response = await fetch('https://monopoly-one.com/api/auth.refresh?refresh_token=' + this.#refresh_token, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+            const refresh_response = await fetch(refresh_url);
 
             // error while refreshing
             if (refresh_response.status !== 200) {
